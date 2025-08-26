@@ -1,9 +1,6 @@
 package com.sayem.trackfit.aiservice.service.impl;
 
-import java.util.Map;
-
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,8 +8,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sayem.trackfit.aiservice.dto.Activity;
+import com.sayem.trackfit.aiservice.entity.DetailedRecommendation;
 import com.sayem.trackfit.aiservice.entity.Recommendation;
-import com.sayem.trackfit.aiservice.mapper.RecommendationMapper;
+import com.sayem.trackfit.aiservice.mapper.DetailedRecommendationMapper;
 import com.sayem.trackfit.aiservice.service.IActivityAiService;
 import com.sayem.trackfit.aiservice.service.IAiService;
 
@@ -27,6 +25,9 @@ public class ActivityAiServiceImpl implements IActivityAiService{
 	private final IAiService aiService;
 	
 	private ObjectMapper mapper = new ObjectMapper();
+	
+	@Autowired
+    private DetailedRecommendationMapper detailedRecommendationMapper;
 	
 	
 	@Override
@@ -76,6 +77,26 @@ public class ActivityAiServiceImpl implements IActivityAiService{
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+
+
+	@Override
+	public DetailedRecommendation generateDetailedRecommendation(Activity activity) {
+		
+		String aiResponse = aiService.getAnswer(activity);
+		log.info("Ai Response: {}", aiResponse);
+		
+		if (aiResponse == null || aiResponse.trim().isEmpty()) {
+            log.error("AI service returned null or empty response for activity: {}", activity.getId());
+            return null;
+        }
+		
+		// Map JSON response to DetailedRecommendation entity
+        DetailedRecommendation recommendation = detailedRecommendationMapper
+            .mapAiResponseToDetailedRecommendation(aiResponse, activity);
+		
+		return recommendation;
 	}
 
 
