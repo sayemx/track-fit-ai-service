@@ -1,4 +1,4 @@
-package com.sayem.trackfit.aiservice.mongo;
+package com.sayem.trackfit.aiservice.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
