@@ -16,4 +16,6 @@ public interface DetailedRecommendationRepository extends MongoRepository<Detail
     List<DetailedRecommendation> findByUserIdAndActivityType(String userId, String activityType);
     
     Optional<DetailedRecommendation> findByActivityIdAndUserId(String activityId, String userId);
+    
+    List<DetailedRecommendation> findByUserIdOrderByCreatedAtDesc(String userId);
 }

@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.sayem.trackfit.aiservice.entity.DetailedRecommendation;
 import com.sayem.trackfit.aiservice.entity.Recommendation;
+import com.sayem.trackfit.aiservice.repository.DetailedRecommendationRepository;
 import com.sayem.trackfit.aiservice.repository.RecommendationRepository;
 import com.sayem.trackfit.aiservice.service.IRecommendationService;
 import com.sayem.trackfit.aiservice.service.exception.RecommendationNotFoundException;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class RecommendationServiceImpl implements IRecommendationService {
 	
 	private final RecommendationRepository recommendationRepository;
+	private final DetailedRecommendationRepository detailedRecommendationRepository;
 
 	@Override
 	public List<Recommendation> getUserRecommendation(String userId) {
@@ -32,6 +35,14 @@ public class RecommendationServiceImpl implements IRecommendationService {
 			.orElseThrow(() -> new RecommendationNotFoundException(activityId));
 		
 		return rcommendation;
+	}
+
+	@Override
+	public List<DetailedRecommendation> getExcerciseUserRecommendation(String userId) {
+		
+		List<DetailedRecommendation> recommendations = detailedRecommendationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+		
+		return recommendations;
 	}
 
 }

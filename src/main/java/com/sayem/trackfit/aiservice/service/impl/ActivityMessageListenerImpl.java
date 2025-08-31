@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sayem.trackfit.aiservice.dto.Activity;
+import com.sayem.trackfit.aiservice.dto.FinishedExcercise;
 import com.sayem.trackfit.aiservice.entity.DetailedRecommendation;
 import com.sayem.trackfit.aiservice.repository.DetailedRecommendationRepository;
 import com.sayem.trackfit.aiservice.repository.RecommendationRepository;
@@ -27,7 +28,7 @@ public class ActivityMessageListenerImpl implements IActivityMessageListener{
     private DetailedRecommendationRepository detailedRecommendationRepository;
 	
 	@Override
-	@RabbitListener(queues = "activity.queue")
+//	@RabbitListener(queues = "activity.queue")
 	public void processActivity(Activity activity) {
 		
 		try {
@@ -56,6 +57,34 @@ public class ActivityMessageListenerImpl implements IActivityMessageListener{
         
 		}catch (Exception e) {
             log.error("Error processing activity with ID: {} - {}", activity.getId(), e.getMessage(), e);
+        }
+		
+	}
+
+	@Override
+	@RabbitListener(queues = "excercise.queue")
+	public void processExcercise(FinishedExcercise finishedExcercise) {
+		
+		try {
+			
+			log.info("Rceived Excercise from the queue: {}", finishedExcercise.getName());
+			log.info("Invoking Genrate Recommendations");
+			
+			DetailedRecommendation detailedRecommendation = activityAiService.generateDetailedRecommendation(finishedExcercise);
+			
+			
+			if (detailedRecommendation == null) {
+	            log.error("Failed to create detailed recommendation entity for activity: {}", finishedExcercise.getName());
+	            return;
+	        }
+			
+			log.info("Saving into Database");
+			DetailedRecommendation savedRecommendation = detailedRecommendationRepository.save(detailedRecommendation);
+	        log.info("Successfully saved detailed recommendation with ID: {} for activity: {}", 
+	            savedRecommendation.getId(), finishedExcercise.getId());
+        
+		}catch (Exception e) {
+            log.error("Error processing activity with ID: {} - {}", finishedExcercise.getId(), e.getMessage(), e);
         }
 		
 	}

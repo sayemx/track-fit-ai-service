@@ -5,12 +5,15 @@ import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "recommendations")
+@Document(collection = "detail_recommendations")
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,35 +26,32 @@ public class DetailedRecommendation {
     private String activityId;
     private String userId;
     private String activityType;
+    private int duration;
+    private int caloryBurned;
     
-    // AI Response fields
     private String summary;
     
-    // Analysis section
     private String effortLevel;
     private String consistency;
     private String calorieEfficiency;
     private List<String> keyObservations;
     
-    // Recommendations section
     private List<String> fitnessAdvice;
     private List<String> nutritionAdvice;
     private List<String> recoveryTips;
     
-    // Other recommendations
     private List<String> improvements;
     private List<String> suggestions;
     
-    // Predictions
     private String trend;
     private String nextBestActivity;
     
-    // Safety (for future use)
     private List<String> safety;
+    private String proTip;
     
     @CreatedDate
     private LocalDateTime createdAt;
     
-    // Store raw AI response for debugging/backup
+    @JsonIgnore
     private String rawAiResponse;
 }

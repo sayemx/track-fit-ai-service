@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.sayem.trackfit.aiservice.dto.Activity;
+import com.sayem.trackfit.aiservice.dto.FinishedExcercise;
 import com.sayem.trackfit.aiservice.service.IAiService;
 
 @Service
@@ -104,5 +105,11 @@ public class GeminiServiceImpl implements IAiService {
                 	 activity.getType()
                 	 );
 
+	}
+
+	@Override
+	public String getAnswer(FinishedExcercise finishedExcercise) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

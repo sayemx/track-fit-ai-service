@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sayem.trackfit.aiservice.dto.Activity;
+import com.sayem.trackfit.aiservice.dto.FinishedExcercise;
 import com.sayem.trackfit.aiservice.service.IAiService;
 
 @Service
@@ -97,5 +98,64 @@ public class OpenApiAiService implements IAiService {
 	
 	        return new Prompt(promptText);
 	   }
+
+	@Override
+	public String getAnswer(FinishedExcercise finishedExcercise) {
+		Prompt prompt = generatePropmtForExcerciseForForOpenApi(finishedExcercise);
+        return chatClient.prompt(prompt)
+                .call()
+                .chatResponse()
+                .getResult()
+                .getOutput()
+                .getText();
+	}
+
+	private Prompt generatePropmtForExcerciseForForOpenApi(FinishedExcercise finishedExcercise) {
+		// Build the prompt string directly without StringTemplate placeholders
+
+        String promptText = "You are an AI fitness assistant that analyzes user activity data.\n"
+            + "\n"
+            + "### Input Data (Activity DTO)\n"
+            + "{\n"
+            + "  \"id\": \"" + finishedExcercise.getId() + "\",\n"
+            + "  \"userId\": \"" + finishedExcercise.getUserId() + "\",\n"
+            + "  \"duration\": " + finishedExcercise.getDuration() + ",       // in minutes\n"
+            + "  \"caloriesBurned\": " + finishedExcercise.getCalories() + ", // in kcal\n"
+            + "  \"activityType\": \"" + finishedExcercise.getName() + "\"\n"
+            + "}\n"
+            + "\n"
+            + "### Task\n"
+            + "1. Analyze the given activity data.\n"
+            + "2. Provide insights on the user's performance.\n"
+            + "3. Suggest personalized fitness advice.\n"
+            + "4. Predict possible health or fitness trends based on the activity.\n"
+            + "5. Keep the response concise and structured.\n"
+            + "\n"
+            + "### Output Format\n"
+            + "Respond ONLY in valid JSON with the following structure:\n"
+            + "{\n"
+            + "  \"summary\": \"Brief summary of the activity\",\n"
+            + "  \"analysis\": {\n"
+            + "    \"effortLevel\": \"low | medium | high\",\n"
+            + "    \"consistency\": \"poor | average | good | excellent\",\n"
+            + "    \"calorieEfficiency\": \"calories burned per minute\",\n"
+            + "    \"keyObservations\": [\"list of insights\"]\n"
+            + "  },\n"
+            + "  \"recommendations\": {\n"
+            + "    \"fitnessAdvice\": [\"list of actionable advice\"],\n"
+            + "    \"nutritionAdvice\": [\"list of nutrition suggestions\"],\n"
+            + "    \"recoveryTips\": [\"list of recovery suggestions\"]\n"
+            + "  },\n"
+            + "  \"improvements\": [\"list of areas to improve\"],\n"
+            + "  \"suggestions\": [\"list of general advice (fitness, nutrition, mindset, etc.)\"],\n"
+            + "  \"proTip\": \"Give a pro-tip\",\n"
+            + "  \"predictions\": {\n"
+            + "    \"trend\": \"expected improvement or decline\",\n"
+            + "    \"nextBestActivity\": \"recommended type of workout\"\n"
+            + "  }\n"
+            + "}";
+
+        return new Prompt(promptText);
+	}
 
 }

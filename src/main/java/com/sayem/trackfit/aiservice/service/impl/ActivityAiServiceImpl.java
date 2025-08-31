@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sayem.trackfit.aiservice.dto.Activity;
+import com.sayem.trackfit.aiservice.dto.FinishedExcercise;
 import com.sayem.trackfit.aiservice.entity.DetailedRecommendation;
 import com.sayem.trackfit.aiservice.entity.Recommendation;
 import com.sayem.trackfit.aiservice.mapper.DetailedRecommendationMapper;
@@ -95,6 +96,26 @@ public class ActivityAiServiceImpl implements IActivityAiService{
 		// Map JSON response to DetailedRecommendation entity
         DetailedRecommendation recommendation = detailedRecommendationMapper
             .mapAiResponseToDetailedRecommendation(aiResponse, activity);
+		
+		return recommendation;
+	}
+
+
+
+	@Override
+	public DetailedRecommendation generateDetailedRecommendation(FinishedExcercise finishedExcercise) {
+		
+		String aiResponse = aiService.getAnswer(finishedExcercise);
+		log.info("Ai Response: {}", aiResponse);
+		
+		if (aiResponse == null || aiResponse.trim().isEmpty()) {
+            log.error("AI service returned null or empty response for finishedExcercise: {}", finishedExcercise.getId());
+            return null;
+        }
+		
+		// Map JSON response to DetailedRecommendation entity
+        DetailedRecommendation recommendation = detailedRecommendationMapper
+            .mapAiResponseToDetailedRecommendation(aiResponse, finishedExcercise);
 		
 		return recommendation;
 	}

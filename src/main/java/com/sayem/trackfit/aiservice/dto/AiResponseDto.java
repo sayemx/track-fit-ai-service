@@ -12,6 +12,7 @@ public class AiResponseDto {
     private List<String> improvements;
     private List<String> suggestions;
     private PredictionsDto predictions;
+    private String proTip;
     
     @Data
     public static class AnalysisDto {

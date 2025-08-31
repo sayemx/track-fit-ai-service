@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sayem.trackfit.aiservice.entity.DetailedRecommendation;
 import com.sayem.trackfit.aiservice.entity.Recommendation;
 import com.sayem.trackfit.aiservice.service.IRecommendationService;
 
@@ -22,8 +23,8 @@ public class RecommendationController {
 	private final IRecommendationService recommendationService;
 	
 	
-	@GetMapping("/user/{userId}")
-	public ResponseEntity<List<Recommendation>> getUserRecommendation(@PathVariable String userId) {
+	@GetMapping("/activity/user/{userId}")
+	public ResponseEntity<List<Recommendation>> getActivityUserRecommendation(@PathVariable String userId) {
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(recommendationService.getUserRecommendation(userId));
@@ -34,6 +35,13 @@ public class RecommendationController {
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(recommendationService.getActivityRecommendation(activityId));
+	}
+	
+	@GetMapping("/excercise/user/{userId}")
+	public ResponseEntity<List<DetailedRecommendation>> getUserRecommendation(@PathVariable String userId) {
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(recommendationService.getExcerciseUserRecommendation(userId));
 	}
 
 }
